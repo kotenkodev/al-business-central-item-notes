@@ -17,6 +17,12 @@ table 50100 "Item Note"
         field(3; "Note Text"; Text[100])
         {
             Caption = 'Note Text';
+
+            trigger OnValidate()
+            begin
+                if Rec."Note Text" = '' then
+                    Error('Note Text cannot be empty.');
+            end;
         }
         field(4; Priority; Enum "Item Priority")
         {
@@ -31,4 +37,11 @@ table 50100 "Item Note"
             Clustered = true;
         }
     }
+
+    trigger OnInsert()
+    begin
+        Rec.TestField("Item No.");
+        if Rec."Note Text" = '' then
+            Error('Cannot insert a note without Note Text.');
+    end;
 }

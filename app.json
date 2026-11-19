@@ -70,6 +70,18 @@
       "name": "Sales and Inventory Forecast",
       "publisher": "Microsoft",
       "version": "29.1.57326.58076"
+    },
+    {
+      "id": "dd0be2ea-f733-4d65-bb34-a28f4624fb14",
+      "name": "Library Assert",
+      "publisher": "Microsoft",
+      "version": "29.1.0.0"
+    },
+    {
+      "id": "d852d5d2-a39d-4179-baeb-f99a19e32510",
+      "name": "Application Test Library",
+      "publisher": "Microsoft",
+      "version": "29.1.0.0"
     }
   ],
   "screenshots": [],

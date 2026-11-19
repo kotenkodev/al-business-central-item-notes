@@ -12,5 +12,12 @@ tableextension 50100 "Item Ext" extends Item
             Caption = 'Internal Note';
             DataClassification = CustomerContent;
         }
+        field(50102; "Note Count"; Integer)
+        {
+            Caption = 'Note Count';
+            FieldClass = FlowField;
+            CalcFormula = count("Item Note" where("Item No." = field("No.")));
+            Editable = false;
+        }
     }
 }

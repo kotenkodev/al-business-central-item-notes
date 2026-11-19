@@ -12,6 +12,10 @@ pageextension 50100 "Item Card Ext" extends "Item Card"
             {
                 ApplicationArea = All;
             }
+            field("Note Count"; Rec."Note Count")
+            {
+                ApplicationArea = All;
+            }
         }
     }
 
@@ -30,6 +34,46 @@ pageextension 50100 "Item Card Ext" extends "Item Card"
                     Helper: Codeunit "Item Note Helper";
                 begin
                     Helper.ShowItemSummary(Rec);
+                end;
+            }
+            action(AddNote)
+            {
+                Caption = 'Add Note';
+                ApplicationArea = All;
+                Image = NewDocument;
+
+                trigger OnAction()
+                var
+                    Helper: Codeunit "Item Note Helper";
+                begin
+                    Helper.AddNoteFromItem(Rec);
+                    CurrPage.Update(false);
+                end;
+            }
+            action(BumpNotes)
+            {
+                Caption = 'Set All Notes High';
+                ApplicationArea = All;
+                Image = Approve;
+
+                trigger OnAction()
+                var
+                    Helper: Codeunit "Item Note Helper";
+                begin
+                    Helper.BumpAllNotesToHigh(Rec."No.");
+                end;
+            }
+            action(TestRollback)
+            {
+                Caption = 'Test Rollback';
+                ApplicationArea = All;
+                Image = ErrorLog;
+
+                trigger OnAction()
+                var
+                    Helper: Codeunit "Item Note Helper";
+                begin
+                    Helper.TestRollback(Rec);
                 end;
             }
         }
