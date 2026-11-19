@@ -1,0 +1,17 @@
+$kind: http-request
+name: Create Item Note
+method: POST
+order: 3000
+url: '{{base_url}}/vadym/inventory/v1.0/companies({{company_id}})/itemNotes'
+headers:
+  - key: Content-Type
+    value: application/json
+  - key: Accept
+    value: application/json
+body:
+  type: json
+  content: |-
+    {
+      "itemNo": "1000",
+      "noteText": "Sample note for item"
+    }

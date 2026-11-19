@@ -1,0 +1,21 @@
+name: Business Central
+values:
+  - key: base_url
+    value: 'http://test:7048/BC/api'
+    enabled: true
+  - key: tenant_id
+    value: ''
+    enabled: false
+    disabled: true
+  - key: company_id
+    value: ''
+    enabled: true
+  - key: username
+    value: ''
+    enabled: true
+  - key: password
+    value: ''
+    enabled: true
+  - key: item_note_id
+    value: ''
+    enabled: true

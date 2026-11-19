@@ -1,0 +1,18 @@
+$kind: http-request
+name: Update Item Note
+method: PATCH
+order: 4000
+url: '{{base_url}}/vadym/inventory/v1.0/companies({{company_id}})/itemNotes({{item_note_id}})'
+headers:
+  - key: Content-Type
+    value: application/json
+  - key: Accept
+    value: application/json
+  - key: If-Match
+    value: '*'
+body:
+  type: json
+  content: |-
+    {
+      "noteText": "Updated note text"
+    }

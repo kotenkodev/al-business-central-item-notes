@@ -5,6 +5,8 @@ codeunit 50103 "Syntax Practice"
         AddExercise(Buffer, 1, 'TestSlaHours', 'Case statement with Enum');
         AddExercise(Buffer, 2, 'TestSyntax', 'If/else and GetShippingFee');
         AddExercise(Buffer, 3, 'TestCurrencyRate', ' Dictionary of currency rates');
+        AddExercise(Buffer, 4, 'TestGetPaymentDueDate', 'Calculate payment due date based on invoice date and net days');
+        AddExercise(Buffer, 5, 'TestTempSorting', 'Insert rows into a temporary table and sort them');
     end;
 
     procedure RunExercise(ExerciseName: Text)
@@ -16,6 +18,10 @@ codeunit 50103 "Syntax Practice"
                 GetShippingFee(45, false);
             'TestCurrencyRate':
                 GetCurrencyRate('EUR');
+            'TestGetPaymentDueDate':
+                GetPaymentDueDate(WorkDate, 30);
+            'TestTempSorting':
+                TestTempSorting();
             else
                 Error('Unknown exercise: %1', ExerciseName);
         end;
@@ -46,18 +52,59 @@ codeunit 50103 "Syntax Practice"
 
     procedure GetCurrencyRate(CurrencyCode: Code[10]): Decimal
     var
-        Dictionary: Dictionary of [Code[10], Decimal];
+        Rates: Dictionary of [Code[10], Decimal];
     begin
-        Dictionary.Add('USD', 1);
-        Dictionary.Add('EUR', 0.92);
-        Dictionary.Add('UAH', 41.5);
+        Rates.Add('USD', 1);
+        Rates.Add('EUR', 0.92);
+        Rates.Add('UAH', 41.5);
 
-        if Dictionary.ContainsKey(CurrencyCode) then
-            Message('Currency rate: %1', Dictionary.Get(CurrencyCode))
+        if Rates.ContainsKey(CurrencyCode) then
+            Message('Currency rate: %1', Rates.Get(CurrencyCode))
         else
             Message('Unknown currency code: %1', 0);
-
     end;
 
+    procedure GetPaymentDueDate(InvoiceDate: Date; NetDays: Integer): Date
+    var
+        Formula: Text;
+        ResultDate: Date;
+    begin
+        if InvoiceDate = 0D then
+            Message('Invoice date is not set. %1 ', 0)
+        else begin
+
+            Formula := StrSubstNo('<+%1D>', NetDays);
+            ResultDate := CalcDate(Formula, InvoiceDate);
+            Message('Payment due date calculated: %1', ResultDate);
+        end;
+    end;
+
+    local procedure InsertRow(var TempBuffer: Record "Name/Value Buffer" temporary; NewID: Integer; NewName: Text[250])
+    begin
+        TempBuffer.Init();
+        TempBuffer.ID := NewID;
+        TempBuffer.Name := NewName;
+        TempBuffer.Insert();
+    end;
+
+    procedure TestTempSorting()
+    var
+        TempBuffer: Record "Name/Value Buffer" temporary;
+        Result: Text;
+    begin
+        InsertRow(TempBuffer, 1, 'Zebra');
+        InsertRow(TempBuffer, 2, 'Alpha');
+        InsertRow(TempBuffer, 3, 'Beta');
+
+        TempBuffer.SetCurrentKey(Name);
+        if TempBuffer.FindSet() then
+            repeat
+                if Result <> '' then
+                    Result += ', ';
+                Result += TempBuffer.Name;
+            until TempBuffer.Next() = 0;
+
+        Message('Sorted result: %1', Result);
+    end;
 
 }

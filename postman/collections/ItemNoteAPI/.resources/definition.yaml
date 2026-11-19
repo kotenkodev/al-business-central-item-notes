@@ -1,0 +1,14 @@
+$kind: collection
+name: Item Note API
+description: |-
+  CRUD collection for the Business Central Item Note API.
+  Publisher: vadym | Group: inventory | Version: v1.0
+  EntitySet: itemNotes
+  Base URL pattern: {{base_url}}/vadym/inventory/v1.0/companies({{company_id}})/itemNotes
+auth:
+  type: basic
+  credentials:
+    - key: username
+      value: '{{username}}'
+    - key: password
+      value: '{{password}}'

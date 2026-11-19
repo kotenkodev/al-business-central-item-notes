@@ -1,0 +1,8 @@
+$kind: http-request
+name: Get All Item Notes
+method: GET
+order: 1000
+url: '{{base_url}}/vadym/inventory/v1.0/companies({{company_id}})/itemNotes'
+headers:
+  - key: Accept
+    value: application/json
