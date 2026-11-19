@@ -2,7 +2,7 @@ $kind: http-request
 name: Check BC Health
 method: GET
 order: 2000
-url: '{{base_url}}/v2.0/companies'
+url: '{{base_url}}/v2.0/companies?tenant={{tenant_id}}'
 auth:
   type: basic
   credentials:

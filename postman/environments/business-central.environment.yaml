@@ -2,20 +2,14 @@ name: Business Central
 values:
   - key: base_url
     value: 'http://test:7048/BC/api'
-    enabled: true
   - key: tenant_id
-    value: ''
-    enabled: false
-    disabled: true
+    value: default
   - key: company_id
     value: 1ada0c11-46de-f111-925e-7ced8d9d91eb
     enabled: true
   - key: username
-    value: ''
-    enabled: true
+    value: admin
   - key: password
-    value: ''
-    enabled: true
+    value: BcS@ndb0x2026!
   - key: item_note_id
     value: ''
-    enabled: true

@@ -1,6 +1,5 @@
 codeunit 50101 "Item Note Events"
 {
-    // 1. Подписчик на стандартное событие таблицы Item (изменение поля Description)
     [EventSubscriber(ObjectType::Table, Database::Item, OnAfterValidateEvent, 'Description', false, false)]
     local procedure OnAfterValidateItemDescription(var Rec: Record Item; var xRec: Record Item; CurrFieldNo: Integer)
     var
@@ -16,17 +15,14 @@ codeunit 50101 "Item Note Events"
         ItemNote.Priority := Enum::"Item Priority"::Low;
         ItemNote.Insert(false);
 
-        // Вызов нашего собственного события
         OnAfterAutoNoteCreated(Rec."No.", ItemNote."Note Text");
     end;
 
-    // 2. Наш собственный Publisher (тело всегда пустое)
     [IntegrationEvent(false, false)]
     local procedure OnAfterAutoNoteCreated(ItemNo: Code[20]; NoteText: Text[100])
     begin
     end;
 
-    // 3. Подписчик на наш собственный Publisher
     [EventSubscriber(ObjectType::Codeunit, Codeunit::"Item Note Events", OnAfterAutoNoteCreated, '', false, false)]
     local procedure HandleAutoNoteCreated(ItemNo: Code[20]; NoteText: Text[100])
     begin

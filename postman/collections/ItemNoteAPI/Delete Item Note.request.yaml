@@ -2,7 +2,7 @@ $kind: http-request
 name: Delete Item Note
 method: DELETE
 order: 5000
-url: '{{base_url}}/vadym/inventory/v1.0/companies({{company_id}})/itemNotes({{item_note_id}})'
+url: '{{base_url}}/vadym/inventory/v1.0/companies({{company_id}})/itemNotes({{item_note_id}})?tenant={{tenant_id}}'
 headers:
   - key: If-Match
     value: '*'
