@@ -90,6 +90,90 @@ codeunit 50102 "Item Note Tests"
         Assert.AreEqual(2, ItemRec."Note Count", 'Note Count should be 2 (1 auto-note + 1 manual note).');
     end;
 
+    [Test]
+    [HandlerFunctions('IgnoreMessageHandler')]
+    procedure TestDummyJSONFirstSyncInsertsProducts()
+    var
+        Products: JsonArray;
+        Sync: Codeunit "Dummy JSON Product Sync";
+        ItemRec: Record Item;
+        InsertedCount: Integer;
+    begin
+        Products := CreateDummyProducts(910001, 'Training product one');
+        InsertedCount := Sync.ProcessProducts(Products, CreateGuid());
+
+        ItemRec.SetRange("Dummy JSON Product ID", 910001);
+        if InsertedCount <> 1 then
+            Error('Expected one inserted product, got %1.', InsertedCount);
+        if ItemRec.Count() <> 1 then
+            Error('Expected one Item for Dummy JSON product 910001.');
+    end;
+
+    [Test]
+    [HandlerFunctions('IgnoreMessageHandler')]
+    procedure TestDummyJSONSecondSyncInsertsZeroProducts()
+    var
+        Products: JsonArray;
+        Sync: Codeunit "Dummy JSON Product Sync";
+        InsertedCount: Integer;
+    begin
+        Products := CreateDummyProducts(910002, 'Training product two');
+        Sync.ProcessProducts(Products, CreateGuid());
+        InsertedCount := Sync.ProcessProducts(Products, CreateGuid());
+
+        if InsertedCount <> 0 then
+            Error('Expected zero inserted products on the second sync, got %1.', InsertedCount);
+    end;
+
+    [Test]
+    [HandlerFunctions('IgnoreMessageHandler')]
+    procedure TestDummyJSONExistingProductIsLogged()
+    var
+        Products: JsonArray;
+        Sync: Codeunit "Dummy JSON Product Sync";
+        SyncLog: Record "Dummy JSON Sync Log";
+        RunId: Guid;
+    begin
+        Products := CreateDummyProducts(910003, 'Training product three');
+        Sync.ProcessProducts(Products, CreateGuid());
+        RunId := CreateGuid();
+        Sync.ProcessProducts(Products, RunId);
+
+        SyncLog.SetRange("Run ID", RunId);
+        SyncLog.SetRange(Status, Enum::"Dummy JSON Sync Status"::Exists);
+        if SyncLog.Count() <> 1 then
+            Error('Expected one Already Exists log entry.');
+    end;
+
+    [Test]
+    procedure TestDummyJSONFailedProductIsLogged()
+    var
+        Products: JsonArray;
+        Sync: Codeunit "Dummy JSON Product Sync";
+        SyncLog: Record "Dummy JSON Sync Log";
+        RunId: Guid;
+    begin
+        Products := CreateDummyProducts(910004, '');
+        RunId := CreateGuid();
+        Sync.ProcessProducts(Products, RunId);
+
+        SyncLog.SetRange("Run ID", RunId);
+        SyncLog.SetRange(Status, Enum::"Dummy JSON Sync Status"::Failed);
+        if SyncLog.Count() <> 1 then
+            Error('Expected one Failed log entry.');
+    end;
+
+    local procedure CreateDummyProducts(ProductId: Integer; ProductTitle: Text): JsonArray
+    var
+        Products: JsonArray;
+        Product: JsonObject;
+    begin
+        Product.Add('id', ProductId);
+        Product.Add('title', ProductTitle);
+        Products.Add(Product);
+        exit(Products);
+    end;
+
     [MessageHandler]
     procedure IgnoreMessageHandler(Message: Text[1024])
     begin

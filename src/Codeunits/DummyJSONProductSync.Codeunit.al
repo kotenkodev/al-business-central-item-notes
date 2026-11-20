@@ -57,6 +57,36 @@ codeunit 50105 "Dummy JSON Product Sync"
             Error('The DummyJSON products property is not an array.');
 
         ProductsArray := ProductsToken.AsArray();
+        InsertedCount := ProcessProducts(ProductsArray, RunId);
+        ProductCount := ProductsArray.Count();
+
+        Setup."Last Sync Time" := CurrentDateTime();
+        Setup."Last Sync Count" := InsertedCount;
+        Setup."Last Sync Status" := StrSubstNo(
+            'Processed %1 products; inserted %2',
+            ProductCount,
+            InsertedCount);
+        Setup.Modify(true);
+
+        Message(
+            'Processed %1 products. Inserted %2 new items. Open Dummy JSON Sync Log for details.',
+            ProductCount,
+            InsertedCount);
+    end;
+
+    procedure ProcessProducts(ProductsArray: JsonArray; RunId: Guid): Integer
+    var
+        ProductToken: JsonToken;
+        ProductObject: JsonObject;
+        IdToken: JsonToken;
+        TitleToken: JsonToken;
+        ItemRec: Record Item;
+        ProductCount: Integer;
+        InsertedCount: Integer;
+        ProductId: Integer;
+        ProductTitle: Text[100];
+        ItemNo: Code[20];
+    begin
         foreach ProductToken in ProductsArray do begin
             ProductObject := ProductToken.AsObject();
             if not ProductObject.Get('id', IdToken) then
@@ -98,12 +128,18 @@ codeunit 50105 "Dummy JSON Product Sync"
                 continue;
             end;
 
-            ItemRec.Init();
-            ItemRec.Validate("No.", ItemNo);
-            ItemRec.Validate(Description, ProductTitle);
-            ItemRec."Dummy JSON Product ID" := ProductId;
-            ItemRec."Dummy JSON Synced" := true;
-            ItemRec.Insert(true);
+            if not TryValidateProduct(ProductTitle) then begin
+                LogProduct(
+                    RunId,
+                    ProductId,
+                    ProductTitle,
+                    ItemNo,
+                    Enum::"Dummy JSON Sync Status"::Failed,
+                    CopyStr(GetLastErrorText(), 1, 250));
+                continue;
+            end;
+
+            InsertProduct(ItemRec, ItemNo, ProductTitle, ProductId);
             InsertedCount += 1;
             LogProduct(
                 RunId,
@@ -114,18 +150,29 @@ codeunit 50105 "Dummy JSON Product Sync"
                 'Item created successfully.');
         end;
 
-        Setup."Last Sync Time" := CurrentDateTime();
-        Setup."Last Sync Count" := InsertedCount;
-        Setup."Last Sync Status" := StrSubstNo(
-            'Processed %1 products; inserted %2',
-            ProductCount,
-            InsertedCount);
-        Setup.Modify(true);
+        exit(InsertedCount);
+    end;
 
-        Message(
-                'Processed %1 products. Inserted %2 new items. Open Dummy JSON Sync Log for details.',
-                ProductCount,
-                InsertedCount);
+    [TryFunction]
+    local procedure TryValidateProduct(ProductTitle: Text[100])
+    begin
+        if ProductTitle = '' then
+            Error('Product title cannot be empty.');
+    end;
+
+    local procedure InsertProduct(
+        var ItemRec: Record Item;
+        ItemNo: Code[20];
+        ProductTitle: Text[100];
+        ProductId: Integer)
+    begin
+        ItemRec.Reset();
+        ItemRec.Init();
+        ItemRec.Validate("No.", ItemNo);
+        ItemRec.Validate(Description, ProductTitle);
+        ItemRec."Dummy JSON Product ID" := ProductId;
+        ItemRec."Dummy JSON Synced" := true;
+        ItemRec.Insert(true);
     end;
 
 
