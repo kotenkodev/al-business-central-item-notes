@@ -2,6 +2,22 @@
 
 This workspace contains an AL extension for Microsoft Dynamics 365 Business Central. It uses Docker for a local Business Central server and VS Code for building and debugging the extension.
 
+## What the app does
+
+This is a training extension built around item notes and external product synchronization.
+
+- Adds an **Item Note** table, list page, priority enum, item-card fields, actions, and FlowField note count.
+- Exposes item notes through the custom API:
+  `api/vadym/inventory/v1.0/companies({company_id})/itemNotes`.
+- Provides an Item Note Summary query/API and an RDLC report.
+- Creates notes from item description events and demonstrates transaction, event, and TestPage behavior.
+- Provides **Dummy JSON Setup** and synchronizes products from `https://dummyjson.com/products`.
+- Inserts only missing Items using the external DummyJSON product ID, making repeated synchronization idempotent.
+- Records per-product synchronization results, run IDs, statuses, and error details in **Dummy JSON Sync Log**.
+- Creates a recurring Job Queue entry during per-company installation and supports manual synchronization from the setup page.
+
+The DummyJSON integration is intentionally a learning exercise for `HttpClient`, JSON parsing, validation, idempotent imports, Job Queue scheduling, and automated AL tests. It should not be treated as a production integration without authentication, pagination, retry, monitoring, and source-data governance.
+
 ## Prerequisites
 
 Install:
