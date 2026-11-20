@@ -19,5 +19,16 @@ tableextension 50100 "Item Ext" extends Item
             CalcFormula = count("Item Note" where("Item No." = field("No.")));
             Editable = false;
         }
+        field(50103; "Dummy JSON Product ID"; Integer)
+        {
+            Caption = 'Dummy JSON Product ID';
+            DataClassification = CustomerContent;
+        }
+        field(50104; "Dummy JSON Synced"; Boolean)
+        {
+            Caption = 'Dummy JSON Synced';
+            DataClassification = SystemMetadata;
+            Editable = false;
+        }
     }
 }

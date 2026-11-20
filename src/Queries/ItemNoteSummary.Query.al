@@ -1,6 +1,11 @@
 query 50100 "Item Note Summary"
 {
-    QueryType = Normal;
+    QueryType = API;
+    APIPublisher = 'vadym';
+    APIGroup = 'inventory';
+    APIVersion = 'v1.0';
+    EntityName = 'itemNoteSummary';
+    EntitySetName = 'itemNoteSummaries';
 
     elements
     {

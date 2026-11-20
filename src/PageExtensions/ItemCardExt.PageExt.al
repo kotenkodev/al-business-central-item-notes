@@ -76,6 +76,18 @@ pageextension 50100 "Item Card Ext" extends "Item Card"
                     Helper.TestRollback(Rec);
                 end;
             }
+            action(ItemNoteSummary)
+            {
+                Caption = 'Item Note Summary';
+                ApplicationArea = All;
+                Image = Report;
+                ToolTip = 'Run the Item Note Summary report.';
+
+                trigger OnAction()
+                begin
+                    Report.Run(50100);
+                end;
+            }
         }
     }
 }
