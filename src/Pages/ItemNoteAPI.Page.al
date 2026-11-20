@@ -30,6 +30,10 @@ page 50102 "Item Note API"
                 {
                     Caption = 'Note Text';
                 }
+                field(priority; Rec.Priority)
+                {
+                    Caption = 'Priority';
+                }
             }
         }
     }

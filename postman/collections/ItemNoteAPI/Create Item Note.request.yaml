@@ -13,5 +13,6 @@ body:
   content: |-
     {
       "itemNo": "1000",
-      "noteText": "Sample note for item"
+      "noteText": "Sample note for item",
+      "priority": "Low"
     }
