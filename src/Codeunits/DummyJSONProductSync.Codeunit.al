@@ -24,13 +24,14 @@ codeunit 50105 "Dummy JSON Product Sync"
         ProductId: Integer;
         ProductTitle: Text[100];
         ItemNo: Code[20];
-        ProductList: Text;
-        ProductLine: Text;
+        RunId: Guid;
     begin
         Setup.GetSetup();
 
         if not Setup."Sync Enabled" then
             exit;
+
+        RunId := CreateGuid();
 
         if not Client.Get(
             'https://dummyjson.com/products?limit=100',
@@ -76,18 +77,24 @@ codeunit 50105 "Dummy JSON Product Sync"
 
             ItemRec.SetRange("Dummy JSON Product ID", ProductId);
             if not ItemRec.IsEmpty() then begin
-                ProductList += StrSubstNo(
-                    '%1. %2 - already exists\',
-                    ProductCount,
-                    ProductTitle);
+                LogProduct(
+                    RunId,
+                    ProductId,
+                    ProductTitle,
+                    ItemNo,
+                    Enum::"Dummy JSON Sync Status"::Exists,
+                    'An Item with this Dummy JSON Product ID already exists.');
                 continue;
             end;
 
             if ItemRec.Get(ItemNo) then begin
-                ProductList += StrSubstNo(
-                    '%1. %2 - item number already exists\',
-                    ProductCount,
-                    ProductTitle);
+                LogProduct(
+                    RunId,
+                    ProductId,
+                    ProductTitle,
+                    ItemNo,
+                    Enum::"Dummy JSON Sync Status"::ItemNumberConflict,
+                    'The generated Item No. is already used by another Item.');
                 continue;
             end;
 
@@ -98,10 +105,13 @@ codeunit 50105 "Dummy JSON Product Sync"
             ItemRec."Dummy JSON Synced" := true;
             ItemRec.Insert(true);
             InsertedCount += 1;
-            ProductList += StrSubstNo(
-                '%1. %2 - inserted\',
-                ProductCount,
-                ProductTitle);
+            LogProduct(
+                RunId,
+                ProductId,
+                ProductTitle,
+                ItemNo,
+                Enum::"Dummy JSON Sync Status"::Inserted,
+                'Item created successfully.');
         end;
 
         Setup."Last Sync Time" := CurrentDateTime();
@@ -112,16 +122,15 @@ codeunit 50105 "Dummy JSON Product Sync"
             InsertedCount);
         Setup.Modify(true);
 
-        ProductLine := StrSubstNo(
-            'Processed %1 products. Inserted %2 new items.\%3',
-            ProductCount,
-            InsertedCount,
-            ProductList);
-        Message(ProductLine);
+        Message(
+                'Processed %1 products. Inserted %2 new items. Open Dummy JSON Sync Log for details.',
+                ProductCount,
+                InsertedCount);
     end;
 
 
     procedure LogProduct(
+        RunId: Guid;
         ProductId: Integer;
         ProductTitle: Text[100];
         ItemNo: Code[20];
@@ -131,6 +140,7 @@ codeunit 50105 "Dummy JSON Product Sync"
         SyncLog: Record "Dummy JSON Sync Log";
     begin
         SyncLog.Init();
+        SyncLog."Run ID" := RunId;
         SyncLog."Sync Time" := CurrentDateTime();
         SyncLog."Product ID" := ProductId;
         SyncLog."Product Title" := ProductTitle;

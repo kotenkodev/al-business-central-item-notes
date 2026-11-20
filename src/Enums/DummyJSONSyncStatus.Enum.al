@@ -14,4 +14,8 @@ enum 50101 "Dummy JSON Sync Status"
     {
         Caption = 'Item Number Conflict';
     }
+    value(3; Failed)
+    {
+        Caption = 'Failed';
+    }
 }

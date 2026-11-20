@@ -33,9 +33,14 @@ table 50102 "Dummy JSON Sync Log"
         {
             Caption = 'Details';
         }
+        field(8; "Run ID"; Guid)
+        {
+            Caption = 'Run ID';
+        }
     }
 
     keys
+
     {
         key(PK; "Entry No.")
         {
@@ -44,5 +49,9 @@ table 50102 "Dummy JSON Sync Log"
         key(Product; "Product ID", "Sync Time")
         {
         }
+        key(Run; "Run ID", "Entry No.")
+        {
+        }
     }
+
 }

@@ -41,6 +41,10 @@ page 50104 "Dummy JSON Sync Log"
                 {
                     ApplicationArea = All;
                 }
+                field("Run ID"; Rec."Run ID")
+                {
+                    ApplicationArea = All;
+                }
             }
         }
     }

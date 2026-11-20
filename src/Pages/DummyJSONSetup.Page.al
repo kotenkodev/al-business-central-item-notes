@@ -40,6 +40,19 @@ page 50103 "Dummy JSON Setup"
     {
         area(Processing)
         {
+            action(ViewSyncLog)
+            {
+                ApplicationArea = All;
+                Caption = 'View Sync Log';
+                Image = Log;
+
+                trigger OnAction()
+                var
+                    SyncLog: Record "Dummy JSON Sync Log";
+                begin
+                    Page.Run(Page::"Dummy JSON Sync Log", SyncLog);
+                end;
+            }
             action(SyncNow)
             {
                 ApplicationArea = All;
